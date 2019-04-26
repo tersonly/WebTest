@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WebTest.Model;
 
 namespace WebTest.Controllers
 {
@@ -10,12 +11,23 @@ namespace WebTest.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+
+        private CustomContext _dbContext;
+
+        public ValuesController(CustomContext dbContext)
+        {
+            this._dbContext = dbContext; 
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var product=  this._dbContext.Product.FirstOrDefault();
+            return  new JsonResult(product);
         }
+
+
 
         // GET api/values/5
         [HttpGet("{id}")]

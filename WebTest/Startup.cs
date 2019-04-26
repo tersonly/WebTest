@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebTest.Model;
 
 namespace WebTest
 {
@@ -24,6 +26,17 @@ namespace WebTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //1.GetConfig
+
+            services.AddDbContextPool<CustomContext>(dbOptionsBuild=> {
+                dbOptionsBuild.UseMySql(Configuration["mysql"]);
+                dbOptionsBuild.UseApplicationServiceProvider(services.BuildServiceProvider());
+                dbOptionsBuild.ConfigureWarnings(warnBuilder => {
+                    warnBuilder.Log();
+                });
+            });
+        
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
